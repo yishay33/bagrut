@@ -1,12 +1,19 @@
 package com.example.bagrutproject;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class MySurfaceView extends SurfaceView implements Runnable{
 
@@ -16,13 +23,27 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     boolean isRunning = true;
     private final Player player;
     private final JoyStick movementJoyStick;
+//    private final Enemy enemy;
+    private final List<Enemy> enemyList = new ArrayList<Enemy>();
+
+    private Canvas c;
+    boolean isPressing = true;
+    Paint p;
+    private Handler handler = new Handler(Looper.getMainLooper());
+
 
     public MySurfaceView(Context context) {
         super(context);
         this.context = context;
         this.holder = getHolder();
-        player = new Player(this.getWidth()/2,this.getHeight()/2,BitmapFactory.decodeResource(getResources(), R.drawable.okaygebusiness),"yishay");
+        player = new Player(this.getWidth()/2,this.getHeight()/2,
+                BitmapFactory.decodeResource(getResources()
+                        , R.drawable.okaygebusiness),"yishay",getContext());
+//        enemy = new Enemy(1000,400,BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player);
         movementJoyStick = new JoyStick(250,800,100,65);
+
+        p = new Paint();
+        p.setAlpha(255/2);
     }
 
     @Override
@@ -32,18 +53,17 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
                 if (!holder.getSurface().isValid())
                     continue;
-                Canvas c = null;
+                c = null;
 
                 try {
                     c = this.getHolder().lockCanvas();
                     synchronized (this.getHolder()) {
                         c.drawRGB(8, 85, 201);
-                        player.draw(c);
+                        player.draw(c,null);
+//                        enemy.draw(c,p);
                         movementJoyStick.draw(c);
+
                         update();
-
-
-
                     }
 
                 } catch (Exception e) {
@@ -61,6 +81,49 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     public void update(){
         movementJoyStick.update();
         player.update(movementJoyStick);
+
+//        enemy.update();
+        updateEnemyList();
+
+        checkForIntersects();
+
+    }
+
+    private void checkForIntersects() {
+        for (Enemy enemy: enemyList){
+            if(player.doesIntersects(enemy)){
+                enemyList.remove(enemy);
+            }
+        }
+    }
+
+    private void updateEnemyList() {
+        for (Enemy enemy: enemyList){
+            enemy.draw(c,p);
+            enemy.update();
+        }
+        if (enemyList.isEmpty()){
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+        }
+    }
+
+    private float randomY() {
+        float result;
+        Random random = new Random();
+        result = random.nextInt(this.getHeight())+1;
+        return result;
+    }
+
+    private float randomX() {
+        float result;
+        Random random = new Random();
+        result = random.nextInt(this.getWidth())+1;
+        return result;
     }
 
     public void pause(){
@@ -78,6 +141,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+//        enemy.isAllowedToMove = true;
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 if (movementJoyStick.isPressed((double) event.getX(), (double) event.getY())) {
