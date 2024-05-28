@@ -3,6 +3,8 @@ package com.example.bagrutproject;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 
 public class Enemy extends Entity{
 
@@ -66,5 +68,6 @@ public class Enemy extends Entity{
         vx = getPosX() - player.getPosX();
         vy = getPosY() - player.getPosY();
     }
+
 
 }

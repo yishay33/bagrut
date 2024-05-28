@@ -3,6 +3,7 @@ package com.example.bagrutproject;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,27 +24,30 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     boolean isRunning = true;
     private final Player player;
     private final JoyStick movementJoyStick;
-//    private final Enemy enemy;
     private final List<Enemy> enemyList = new ArrayList<Enemy>();
-
+    Wall wall;
     private Canvas c;
     boolean isPressing = true;
     Paint p;
+    Paint wallPaint;
     private Handler handler = new Handler(Looper.getMainLooper());
-
+    private boolean firstTime = true;
 
     public MySurfaceView(Context context) {
         super(context);
         this.context = context;
         this.holder = getHolder();
+        p = new Paint();
+        p.setAlpha(255/2);
+        wallPaint = new Paint();
+        wallPaint.setColor(Color.RED);
+        wall = new Wall(200,100,200,100,wallPaint);
         player = new Player(this.getWidth()/2,this.getHeight()/2,
                 BitmapFactory.decodeResource(getResources()
                         , R.drawable.okaygebusiness),"yishay",getContext());
-//        enemy = new Enemy(1000,400,BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player);
         movementJoyStick = new JoyStick(250,800,100,65);
 
-        p = new Paint();
-        p.setAlpha(255/2);
+
     }
 
     @Override
@@ -59,11 +63,18 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                     c = this.getHolder().lockCanvas();
                     synchronized (this.getHolder()) {
                         c.drawRGB(8, 85, 201);
-                        player.draw(c,null);
-//                        enemy.draw(c,p);
+                        if (firstTime) {
+                            player.setCords((this.getWidth() / 2)-player.getBitmap().getWidth(), (this.getHeight() / 2)-player.getBitmap().getWidth());
+                            firstTime = false;
+                        }
+
+                        player.draw(c, null);
+
                         movementJoyStick.draw(c);
+                        wall.draw(c);
 
                         update();
+
                     }
 
                 } catch (Exception e) {
@@ -80,9 +91,9 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
     public void update(){
         movementJoyStick.update();
-        player.update(movementJoyStick);
+        player.update(movementJoyStick,wall);
 
-//        enemy.update();
+        wall = new Wall(200,100,800,100,wallPaint);
         updateEnemyList();
 
         checkForIntersects();

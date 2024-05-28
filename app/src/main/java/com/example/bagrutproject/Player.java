@@ -7,7 +7,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 import android.widget.Toast;
+
+import java.util.List;
 
 public class Player extends Entity{
 
@@ -15,6 +18,9 @@ public class Player extends Entity{
     String playerName;
 
     Context context;
+    private float futureX;
+    private float futureY;
+
 
 
     public Player(float cordX, float cordY, Bitmap bitmap, String playerName, Context context) {
@@ -25,27 +31,37 @@ public class Player extends Entity{
     }
 
 
-    @Override
-    public void draw(Canvas c,Paint p) {
-        super.draw(c,p);
-    }
 
 
 
     public void setCords(float x,float y){
         setPosX(x);
         setPosY(y);
-
     }
 
-    public void update(JoyStick joyStick){
+    public void update(JoyStick joyStick,Wall wall){
         velocityX = joyStick.getActuatorX()*MAX_SPEED;
         velocityY = joyStick.getActuatorY()*MAX_SPEED;
-        super.setPosX(getPosX()+(float) velocityX);
-        super.setPosY(getPosY()+(float) velocityY);
+        futureX = getPosX()+(float) velocityX;
+        futureY = getPosY()+(float) velocityY;
+
+
+        Rect futurePlayer = new Rect();
+        futurePlayer.set((int) futureX,(int) futureY,(int) futureX+this.getBitmap().getWidth(),(int)futureY + this.getBitmap().getHeight());
+
+        if (!wall.getCollisions().intersect(futurePlayer)){
+            move();
+        }
+
+
+
 
     }
 
+    public void move() {
+        super.setPosX(getPosX() + (float) velocityX);
+        super.setPosY(getPosY() + (float) velocityY);
 
+    }
 
 }

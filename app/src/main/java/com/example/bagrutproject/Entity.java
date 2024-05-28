@@ -64,6 +64,8 @@ public class Entity {
     public void setPosY(float posY) {
         this.posY = posY;
     }
+
+
     public Rect getCollisions() {
         return collisions;
     }
