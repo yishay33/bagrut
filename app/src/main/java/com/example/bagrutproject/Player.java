@@ -48,12 +48,26 @@ public class Player extends Entity{
 
         Rect futurePlayer = new Rect();
         futurePlayer.set((int) futureX,(int) futureY,(int) futureX+this.getBitmap().getWidth(),(int)futureY + this.getBitmap().getHeight());
+        Rect futurePlayerX = new Rect();
+        futurePlayerX.set((int) futureX,(int) getPosY(),(int) futureX+this.getBitmap().getWidth(),(int)getPosY() + this.getBitmap().getHeight());
+        Rect futurePlayerY = new Rect();
+        futurePlayerY.set((int) getPosX(),(int) futureY,(int) getPosX()+this.getBitmap().getWidth(),(int)futureY + this.getBitmap().getHeight());
 
-        if (!wall.getCollisions().intersect(futurePlayer)){
+
+
+
+        //check for X axis
+        if (wall.getCollisions().intersect(futurePlayerX) && !wall.getCollisions().intersect(futurePlayerY)){
+            super.setPosY(getPosY() + (float) velocityY);
+        }
+        //check for Y axis
+        else if (!wall.getCollisions().intersect(futurePlayerX) && wall.getCollisions().intersect(futurePlayerY)) {
+            super.setPosX(getPosX() + (float) velocityX);
+        }
+        //can run without conditions
+        else if (!wall.getCollisions().intersect(futurePlayer)){
             move();
         }
-
-
 
 
     }
