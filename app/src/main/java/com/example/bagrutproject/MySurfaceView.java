@@ -33,19 +33,25 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     private Handler handler = new Handler(Looper.getMainLooper());
     private boolean firstTime = true;
 
+    List<Map> levels = new ArrayList<Map>();
+
     public MySurfaceView(Context context) {
         super(context);
         this.context = context;
         this.holder = getHolder();
         p = new Paint();
         p.setAlpha(255/2);
+
         wallPaint = new Paint();
         wallPaint.setColor(Color.RED);
-        wall = new Wall(200,100,200,100,wallPaint);
+
+
         player = new Player(this.getWidth()/2,this.getHeight()/2,
                 BitmapFactory.decodeResource(getResources()
-                        , R.drawable.okaygebusiness),"yishay",getContext());
+                        , R.drawable.okaygebusiness),"Yishay",getContext());
+
         movementJoyStick = new JoyStick(250,800,100,65);
+
 
 
     }
@@ -62,16 +68,15 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                 try {
                     c = this.getHolder().lockCanvas();
                     synchronized (this.getHolder()) {
-                        c.drawRGB(8, 85, 201);
                         if (firstTime) {
                             player.setCords((this.getWidth() / 2)-player.getBitmap().getWidth(), (this.getHeight() / 2)-player.getBitmap().getWidth());
                             firstTime = false;
+                            levels.add(new Level_1(context,c,player));
                         }
 
-                        player.draw(c, null);
-
+                        player.draw(c,null);
                         movementJoyStick.draw(c);
-                        wall.draw(c);
+//                        levels.get(0).drawMap(c);
 
                         update();
 
@@ -91,9 +96,11 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
     public void update(){
         movementJoyStick.update();
-        player.update(movementJoyStick,wall);
-
-        wall = new Wall(200,100,800,100,wallPaint);
+        for (Wall wall :levels.get(0).getWallList()) {
+            player.update(movementJoyStick, wall);
+            wall.update();
+        }
+//        wall = new Wall(200,100,800,100,wallPaint);
         updateEnemyList();
 
         checkForIntersects();
@@ -101,9 +108,11 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     }
 
     private void checkForIntersects() {
-        for (Enemy enemy: enemyList){
-            if(player.doesIntersects(enemy)){
-                enemyList.remove(enemy);
+        if (!enemyList.isEmpty()) {
+            for (Enemy enemy : enemyList) {
+                if (player.doesIntersects(enemy)) {
+                    enemyList.remove(enemy);
+                }
             }
         }
     }
@@ -114,12 +123,12 @@ public class MySurfaceView extends SurfaceView implements Runnable{
             enemy.update();
         }
         if (enemyList.isEmpty()){
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.enemy),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
+            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
         }
     }
 

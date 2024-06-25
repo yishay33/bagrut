@@ -54,8 +54,6 @@ public class Player extends Entity{
         futurePlayerY.set((int) getPosX(),(int) futureY,(int) getPosX()+this.getBitmap().getWidth(),(int)futureY + this.getBitmap().getHeight());
 
 
-
-
         //check for X axis
         if (wall.getCollisions().intersect(futurePlayerX) && !wall.getCollisions().intersect(futurePlayerY)){
             super.setPosY(getPosY() + (float) velocityY);
