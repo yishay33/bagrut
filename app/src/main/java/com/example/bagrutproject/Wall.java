@@ -16,6 +16,7 @@ public class Wall{
     private Rect collisions;
 
 
+
     public Wall(int posX, int posY,int width, int height,Paint p) {
         this.posX = posX;
         this.posY = posY;
@@ -24,11 +25,18 @@ public class Wall{
 
         this.p = p;
 
-        collisions = new Rect(posX,posY,posX+width,posY+height);
+        collisions = new Rect(this.posX,this.posY,this.posX+width,this.posY+height);
     }
 
     public void update(){
-        p.setColor(Color.RED);
+
+        collisions.set(this.posX,this.posY,this.posX+width,this.posY+height);
+
+    }
+
+    public Wall dupWall(){
+        Wall wall = new Wall(this.posX,this.posY,this.width,this.height,p);
+        return wall;
     }
 
     public void draw(Canvas c){

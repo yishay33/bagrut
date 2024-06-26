@@ -26,7 +26,7 @@ public class Player extends Entity{
     public Player(float cordX, float cordY, Bitmap bitmap, String playerName, Context context) {
         super(cordX, cordY, bitmap);
         this.playerName = playerName;
-        setBitmap(resizeBitmap(bitmap,60,60));
+        setBitmap(resizeBitmap(bitmap,40,60));
         this.context = context;
     }
 
@@ -39,7 +39,7 @@ public class Player extends Entity{
         setPosY(y);
     }
 
-    public void update(JoyStick joyStick,Wall wall){
+    public void update(JoyStick joyStick,List<Wall> walls){
         velocityX = joyStick.getActuatorX()*MAX_SPEED;
         velocityY = joyStick.getActuatorY()*MAX_SPEED;
         futureX = getPosX()+(float) velocityX;
@@ -54,21 +54,22 @@ public class Player extends Entity{
         futurePlayerY.set((int) getPosX(),(int) futureY,(int) getPosX()+this.getBitmap().getWidth(),(int)futureY + this.getBitmap().getHeight());
 
 
-
-
-        //check for X axis
-        if (wall.getCollisions().intersect(futurePlayerX) && !wall.getCollisions().intersect(futurePlayerY)){
-            super.setPosY(getPosY() + (float) velocityY);
-        }
-        //check for Y axis
-        else if (!wall.getCollisions().intersect(futurePlayerX) && wall.getCollisions().intersect(futurePlayerY)) {
-            super.setPosX(getPosX() + (float) velocityX);
-        }
-        //can run without conditions
-        else if (!wall.getCollisions().intersect(futurePlayer)){
-            move();
-        }
-
+//        if (walls != null){
+            for (Wall wall : walls) {
+               //check for X axis
+             if (wall.getCollisions().intersect(futurePlayerX) && !wall.getCollisions().intersect(futurePlayerY)) {
+                   super.setPosY(getPosY() + (float) velocityY);
+                }
+               //check for Y axis
+               else if (!wall.getCollisions().intersect(futurePlayerX) && wall.getCollisions().intersect(futurePlayerY)) {
+                   super.setPosX(getPosX() + (float) velocityX);
+               }
+               //can run without conditions
+               else if (!wall.getCollisions().intersect(futurePlayer)) {
+                 move();
+             }
+            }
+//        }
 
     }
 

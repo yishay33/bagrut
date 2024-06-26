@@ -19,7 +19,7 @@ public class Enemy extends Entity{
 
     public Enemy(float cordX, float cordY, Bitmap bitmap,Context context,Player player) {
         super(cordX, cordY, bitmap);
-        setBitmap(resizeBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.enemy),60,60));
+        setBitmap(resizeBitmap(bitmap,60,60));
         this.context = context;
         this.player = player;
 
