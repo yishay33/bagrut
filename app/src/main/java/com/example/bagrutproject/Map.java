@@ -77,5 +77,5 @@ public abstract class Map {
     //        enemies.add(new Enemy(800,200, BitmapFactory.decodeResource(context.getResources(),R.drawable.enemy),getContext(),getPlayer()));
     //        setEnemies(enemies);
     //    }
-        public abstract void createWalls();
+
 }
