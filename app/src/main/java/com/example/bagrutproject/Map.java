@@ -13,12 +13,13 @@ public abstract class Map {
     int r;
     int g;
     int b;
-
-    public Map(int r,int g, int b) {
+    MySurfaceView mySurfaceView;
+    public Map(int r,int g, int b,MySurfaceView mySurfaceView) {
         walls = new ArrayList<Wall>();
         this.r = r;
         this.g = g;
         this.b = b;
+        this.mySurfaceView = mySurfaceView;
     }
 
     protected void drawMap(Canvas c){
@@ -26,6 +27,8 @@ public abstract class Map {
             wall.draw(c);
         }
     }
+
+    protected abstract void createWalls();
 
     public List<Enemy> getEnemies() {
         return enemies;

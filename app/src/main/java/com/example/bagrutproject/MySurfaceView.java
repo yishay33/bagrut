@@ -43,7 +43,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
         movementJoyStick = new JoyStick(250,800,100,65);
 
-        levels.add(new Level_1(0, 0, 255));
+        levels.add(new Level_1(0, 0, 255,this));
     }
 
     @Override
@@ -62,6 +62,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                         if (firstTime) {
                             player.setCords((this.getWidth() / 2)-player.getBitmap().getWidth(), (this.getHeight() / 2)-player.getBitmap().getWidth());
                             firstTime = false;
+                            levels.get(0).createWalls();
                         }
 
                         player.draw(c, null);

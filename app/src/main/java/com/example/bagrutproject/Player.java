@@ -53,30 +53,46 @@ public class Player extends Entity{
         Rect futurePlayerY = new Rect();
         futurePlayerY.set((int) getPosX(),(int) futureY,(int) getPosX()+this.getBitmap().getWidth(),(int)futureY + this.getBitmap().getHeight());
 
+        boolean intersectsWall = false;
+        Wall tempWall = null;
 
-//        if (walls != null){
-            for (Wall wall : walls) {
+
+        for (Wall wall : walls) {
                //check for X axis
              if (wall.getCollisions().intersect(futurePlayerX) && !wall.getCollisions().intersect(futurePlayerY)) {
                    super.setPosY(getPosY() + (float) velocityY);
-                }
-               //check for Y axis
-               else if (!wall.getCollisions().intersect(futurePlayerX) && wall.getCollisions().intersect(futurePlayerY)) {
-                   super.setPosX(getPosX() + (float) velocityX);
-               }
-               //can run without conditions
-               else if (!wall.getCollisions().intersect(futurePlayer)) {
-                 move();
+                   intersectsWall  = true;
+                   tempWall = wall;
+                 Log.d("case 3","move y");
              }
-            }
-//        }
+             //check for Y axis
+             else if (!wall.getCollisions().intersect(futurePlayerX) && wall.getCollisions().intersect(futurePlayerY)) {
+                 super.setPosX(getPosX() + (float) velocityX);
+                 intersectsWall = true;
+                 tempWall = wall;
+                 Log.d("case 3","move x");
+             }
+             //can run without conditions
+            else if (wall.getCollisions().intersect(futurePlayer)){
+                intersectsWall = true;
+                tempWall = wall;
+             }
+        }
 
+        if (!intersectsWall){
+            move();
+        }
+//        if (tempWall != null)
+//            tempWall.update();
+        for (Wall wall: walls){
+            wall.update();
+        }
     }
 
     public void move() {
         super.setPosX(getPosX() + (float) velocityX);
         super.setPosY(getPosY() + (float) velocityY);
-
+        Log.d("case 3","move");
     }
 
 }

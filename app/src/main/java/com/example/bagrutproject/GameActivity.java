@@ -33,7 +33,6 @@ public class GameActivity extends AppCompatActivity {
         while(true){
             try {
                 thread.join();
-
             }
             catch (Exception e){
                 e.printStackTrace();

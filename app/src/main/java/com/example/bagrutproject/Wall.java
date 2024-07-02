@@ -29,9 +29,7 @@ public class Wall{
     }
 
     public void update(){
-
         collisions.set(this.posX,this.posY,this.posX+width,this.posY+height);
-
     }
 
     public Wall dupWall(){
