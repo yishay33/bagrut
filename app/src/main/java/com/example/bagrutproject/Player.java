@@ -104,8 +104,11 @@ public class Player extends Entity{
     }
 
 
+
     public void setCurrentHp(int hp){
-        currentHp = hp;
+        if (currentHp > 0) {
+            currentHp = hp;
+        }
     }
 
     public int getCurrentHp(){

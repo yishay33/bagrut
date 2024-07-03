@@ -47,6 +47,7 @@ public class HealthBar {
         healthRight = healthLeft + healthWidth*healthPointsPercentage;
         healthBottom = borderBottom - margin;
         healthTop = healthBottom - healthHeight;
+
         //draws the current health above the empty health
         canvas.drawRect(healthLeft,healthTop,healthRight,healthBottom,healthPaint);
     }
