@@ -36,7 +36,7 @@ public abstract class Map {
 
     protected void drawEnemies(Canvas c){
         for (Enemy enemy: enemies){
-            enemy.draw(c,null);
+            enemy.draw(c);
         }
     }
 

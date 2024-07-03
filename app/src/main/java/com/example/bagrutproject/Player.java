@@ -21,6 +21,9 @@ public class Player extends Entity{
     private float futureX;
     private float futureY;
 
+    final int MAX_HP = 10;
+    private int currentHp = MAX_HP;
+    private HealthBar healthBar;
 
 
     public Player(float cordX, float cordY, Bitmap bitmap, String playerName, Context context) {
@@ -28,10 +31,9 @@ public class Player extends Entity{
         this.playerName = playerName;
         setBitmap(resizeBitmap(bitmap,40,60));
         this.context = context;
+
+        this.healthBar = new HealthBar(this);
     }
-
-
-
 
 
     public void setCords(float x,float y){
@@ -93,6 +95,21 @@ public class Player extends Entity{
         super.setPosX(getPosX() + (float) velocityX);
         super.setPosY(getPosY() + (float) velocityY);
         Log.d("case 3","move");
+    }
+
+    @Override
+    public void draw(Canvas canvas){
+        super.draw(canvas);
+        healthBar.draw(canvas);
+    }
+
+
+    public void setCurrentHp(int hp){
+        currentHp = hp;
+    }
+
+    public int getCurrentHp(){
+        return currentHp;
     }
 
 }

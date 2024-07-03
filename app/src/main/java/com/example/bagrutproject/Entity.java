@@ -35,8 +35,8 @@ public abstract class Entity {
         return collisions.intersect(entity2.getCollisions());
     }
 
-    public void draw(Canvas c, Paint p){
-        c.drawBitmap(this.bitmap,this.posX,this.posY,p);
+    public void draw(Canvas c){
+        c.drawBitmap(this.bitmap,this.posX,this.posY,null);
         updateCollisions();
     }
 

@@ -26,15 +26,22 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     private final JoyStick movementJoyStick;
     private Canvas c;
     boolean isPressing = true;
-    private Handler handler = new Handler(Looper.getMainLooper());
+//    private Handler handler = new Handler(Looper.getMainLooper());
     private boolean firstTime = true;
     List<Map> levels = new ArrayList<Map>();
-
+    Handler handler = new Handler();
+    int score = 0;
+    Paint p;
 
     public MySurfaceView(Context context) {
         super(context);
         this.context = context;
         this.holder = getHolder();
+
+        p  = new Paint();
+        p.setColor(Color.GREEN);
+        p.setTextSize(100);
+
 
         player = new Player(this.getWidth()/2,this.getHeight()/2,
                 BitmapFactory.decodeResource(getResources()
@@ -70,11 +77,13 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
                         }
 
-                        player.draw(c, null);
+                        player.draw(c);
 
                         movementJoyStick.draw(c);
 
                         levels.get(0).drawMap(c);
+
+                        c.drawText(""+score,100,100,p);
 
                         update();
                         levels.get(0).drawEnemies(c);
@@ -102,7 +111,6 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         levels.get(0).updateEnemies(player);
 
         checkForIntersects();
-//        updateEnemyList();
 
     }
 
@@ -110,6 +118,9 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         for (Enemy enemy: levels.get(0).getEnemies()){
             if(player.doesIntersects(enemy)){
                 levels.get(0).getEnemies().remove(enemy);
+                score++;
+                player.setCurrentHp(player.getCurrentHp()-1);
+
             }
         }
     }
