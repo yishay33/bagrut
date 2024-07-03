@@ -21,7 +21,9 @@ public class Player extends Entity{
     private float futureX;
     private float futureY;
 
-    final int MAX_HP = 10;
+
+
+    final int MAX_HP = 5;
     private int currentHp = MAX_HP;
     private HealthBar healthBar;
 
@@ -103,7 +105,13 @@ public class Player extends Entity{
         healthBar.draw(canvas);
     }
 
+    public Context getContext() {
+        return context;
+    }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
 
     public void setCurrentHp(int hp){
         if (currentHp > 0) {

@@ -67,6 +67,30 @@ public class JoyStick {
         return joystickCenterToTouchRadius < outerCircleRadius;
     }
 
+    public int getOuterCircleCenterPositionX() {
+        return outerCircleCenterPositionX;
+    }
+
+    public void setOuterCircleCenterPositionX(int outerCircleCenterPositionX) {
+        this.outerCircleCenterPositionX = outerCircleCenterPositionX;
+    }
+
+    public int getOuterCircleCenterPositionY() {
+        return outerCircleCenterPositionY;
+    }
+
+    public void setOuterCircleCenterPositionY(int outerCircleCenterPositionY) {
+        this.outerCircleCenterPositionY = outerCircleCenterPositionY;
+    }
+
+    public int getOuterCircleRadius() {
+        return outerCircleRadius;
+    }
+
+    public void setOuterCircleRadius(int outerCircleRadius) {
+        this.outerCircleRadius = outerCircleRadius;
+    }
+
     public void setIsPressed(boolean isPressed) {
         this.isPressed = isPressed;
     }

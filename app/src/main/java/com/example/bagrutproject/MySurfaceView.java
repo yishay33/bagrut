@@ -26,12 +26,13 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     private final JoyStick movementJoyStick;
     private Canvas c;
     boolean isPressing = true;
-//    private Handler handler = new Handler(Looper.getMainLooper());
     private boolean firstTime = true;
     List<Map> levels = new ArrayList<Map>();
-    Handler handler = new Handler();
+    List<Shuriken> shurikens = new ArrayList<Shuriken>();
+
     int score = 0;
     Paint p;
+    private int joyStickPointerId = 0;
 
     public MySurfaceView(Context context) {
         super(context);
@@ -84,6 +85,9 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                         levels.get(0).drawMap(c);
 
                         c.drawText(""+score,100,100,p);
+                        for (Shuriken shuriken: shurikens){
+                            shuriken.draw(c);
+                        }
 
                         update();
                         levels.get(0).drawEnemies(c);
@@ -109,8 +113,29 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
         player.update(movementJoyStick, levels.get(0).getWalls());
         levels.get(0).updateEnemies(player);
-
+        updateShurikenlList();
         checkForIntersects();
+
+    }
+
+
+    public void updateShurikenlList(){
+        for (Shuriken shuriken : shurikens){
+            shuriken.update();
+
+            if (shuriken.posX > this.getWidth() ||shuriken.posX < 0 || shuriken.posY > this.getHeight() ||shuriken.posY < 0 ){
+                shurikens.remove(shuriken);
+            }else {
+                for (Enemy enemy : levels.get(0).getEnemies()) {
+                    if (shuriken.getCollisions().intersect(enemy.getCollisions())){
+                        shurikens.remove(shuriken);
+                        levels.get(0).getEnemies().remove(enemy);
+                        score++;
+                    }
+                }
+            }
+        }
+
 
     }
 
@@ -118,41 +143,13 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         for (Enemy enemy: levels.get(0).getEnemies()){
             if(player.doesIntersects(enemy)){
                 levels.get(0).getEnemies().remove(enemy);
-                score++;
+//                score++;
                 player.setCurrentHp(player.getCurrentHp()-1);
-
             }
         }
     }
 
-    private void updateEnemyList() {
-//        for (Enemy enemy: enemyList){
-//            enemy.draw(c,null);
-//            enemy.update(player);
-//        }
-//        if (enemyList.isEmpty()){
-//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
-//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
-//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
-//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
-//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
-//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
-//        }
-    }
 
-    private float randomY() {
-        float result;
-        Random random = new Random();
-        result = random.nextInt(this.getHeight())+1;
-        return result;
-    }
-
-    private float randomX() {
-        float result;
-        Random random = new Random();
-        result = random.nextInt(this.getWidth())+1;
-        return result;
-    }
 
     public void pause(){
         isRunning = false;
@@ -167,23 +164,56 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         ((GameActivity)context).finish();
     }
 
+    public boolean isPointInside(double pointX, double pointY) {
+        // Calculate the distance between the point and the circle's center
+        double distance = Math.sqrt(Math.pow(pointX - movementJoyStick.getOuterCircleCenterPositionX(),
+                2) + Math.pow(pointY - movementJoyStick.getOuterCircleCenterPositionY(), 2));
+
+        // Check the position based on distance and radius
+        return distance < movementJoyStick.getOuterCircleRadius(); // Inside the circle
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-//        enemy.isAllowedToMove = true;
-        switch (event.getAction()) {
+
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                if (movementJoyStick.isPressed((double) event.getX(), (double) event.getY())) {
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if (movementJoyStick.getIsPressed()){
+                    //joystick is pressed and another action comes in,
+                    // meaning a shuriken is meant to be thrown
+
+                    if (!isPointInside(event.getX(),event.getY())){
+                        shurikens.add(new Shuriken(player,event.getX(),event.getY()));
+                    }
+
+                }
+                else if (movementJoyStick.isPressed((double) event.getX(), (double) event.getY())) {
+                    //the joystick is being pressed
+                    joyStickPointerId = event.getPointerId(event.getActionIndex());
                     movementJoyStick.setIsPressed(true);
+                }else {
+                    //joystick is not pressed and hasn't been pressed
+                    //meaning a shuriken is meant to be thrown
+                    if (!isPointInside(event.getX(),event.getY())){
+                        shurikens.add(new Shuriken(player,event.getX(),event.getY()));
+                    }
                 }
                 return true;
             case MotionEvent.ACTION_MOVE:
                 if (movementJoyStick.getIsPressed()){
+                    //joystick was pressed before and is now being dragged
                     movementJoyStick.setActuator((double) event.getX(), (double) event.getY());
                 }
                 return true;
             case MotionEvent.ACTION_UP:
-                movementJoyStick.setIsPressed(false);
-                movementJoyStick.resetActuator();
+            case MotionEvent.ACTION_POINTER_UP:
+                if (joyStickPointerId == event.getPointerId(event.getActionIndex())){
+                    //joystick was let go of resetting the joystick and setting is pressed to false
+                    movementJoyStick.setIsPressed(false);
+                    movementJoyStick.resetActuator();
+
+                }
                 return true;
         }
 
