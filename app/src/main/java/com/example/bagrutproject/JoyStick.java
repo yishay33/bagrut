@@ -36,10 +36,11 @@ public class JoyStick {
         //paint
         outerCirclePaint = new Paint();
         outerCirclePaint.setColor(Color.GRAY);
+        outerCirclePaint.setAlpha(200);
         outerCirclePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
         innerCirclePaint = new Paint();
-        innerCirclePaint.setColor(Color.RED);
+        innerCirclePaint.setColor(Color.BLACK);
         innerCirclePaint.setStyle(Paint.Style.FILL_AND_STROKE);
 
     }

@@ -24,13 +24,12 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     boolean isRunning = true;
     private final Player player;
     private final JoyStick movementJoyStick;
-    private final List<Enemy> enemyList = new ArrayList<Enemy>();
     private Canvas c;
     boolean isPressing = true;
-    Paint p;
     private Handler handler = new Handler(Looper.getMainLooper());
     private boolean firstTime = true;
     List<Map> levels = new ArrayList<Map>();
+
 
     public MySurfaceView(Context context) {
         super(context);
@@ -43,7 +42,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
         movementJoyStick = new JoyStick(250,800,100,65);
 
-        levels.add(new Level_1(0, 0, 255,this));
+        levels.add(new Level_1(0, 0, 255,this,context));
     }
 
     @Override
@@ -58,11 +57,17 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                 try {
                     c = this.getHolder().lockCanvas();
                     synchronized (this.getHolder()) {
-                        c.drawRGB(8, 85, 201);
+                        c.drawRGB(levels.get(0).getR(), levels.get(0).getG(), levels.get(0).getB());
                         if (firstTime) {
+
+
                             player.setCords((this.getWidth() / 2)-player.getBitmap().getWidth(), (this.getHeight() / 2)-player.getBitmap().getWidth());
-                            firstTime = false;
+
                             levels.get(0).createWalls();
+                            levels.get(0).createEnemies();
+
+                            firstTime = false;
+
                         }
 
                         player.draw(c, null);
@@ -72,6 +77,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                         levels.get(0).drawMap(c);
 
                         update();
+                        levels.get(0).drawEnemies(c);
 
                     }
 
@@ -91,36 +97,36 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
         movementJoyStick.update();
         levels.get(0).updateWalls();
+
         player.update(movementJoyStick, levels.get(0).getWalls());
+        levels.get(0).updateEnemies(player);
 
         checkForIntersects();
-        updateEnemyList();
+//        updateEnemyList();
 
     }
 
     private void checkForIntersects() {
-        for (Enemy enemy: enemyList){
+        for (Enemy enemy: levels.get(0).getEnemies()){
             if(player.doesIntersects(enemy)){
-                enemyList.remove(enemy);
-
+                levels.get(0).getEnemies().remove(enemy);
             }
         }
-
     }
 
     private void updateEnemyList() {
-        for (Enemy enemy: enemyList){
-            enemy.draw(c,p);
-            enemy.update();
-        }
-        if (enemyList.isEmpty()){
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost1),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost2),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost2),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3),getContext(),player));
-            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3),getContext(),player));
-        }
+//        for (Enemy enemy: enemyList){
+//            enemy.draw(c,null);
+//            enemy.update(player);
+//        }
+//        if (enemyList.isEmpty()){
+//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
+//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
+//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
+//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
+//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
+//            enemyList.add(new Enemy(randomX(),randomY(),BitmapFactory.decodeResource(getResources(),R.drawable.ghost3)));
+//        }
     }
 
     private float randomY() {

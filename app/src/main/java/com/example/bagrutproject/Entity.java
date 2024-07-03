@@ -6,7 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-public class Entity {
+public abstract class Entity {
 
     private float posX;
     private float posY;

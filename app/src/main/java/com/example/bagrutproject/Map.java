@@ -1,8 +1,10 @@
 package com.example.bagrutproject;
 
+import android.content.Context;
 import android.graphics.Canvas;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public abstract class Map {
@@ -14,12 +16,16 @@ public abstract class Map {
     int g;
     int b;
     MySurfaceView mySurfaceView;
-    public Map(int r,int g, int b,MySurfaceView mySurfaceView) {
+    Context context;
+
+    public Map(int r, int g, int b, MySurfaceView mySurfaceView, Context context) {
         walls = new ArrayList<Wall>();
+        enemies = new ArrayList<Enemy>();
         this.r = r;
         this.g = g;
         this.b = b;
         this.mySurfaceView = mySurfaceView;
+        this.context = context;
     }
 
     protected void drawMap(Canvas c){
@@ -28,7 +34,15 @@ public abstract class Map {
         }
     }
 
+    protected void drawEnemies(Canvas c){
+        for (Enemy enemy: enemies){
+            enemy.draw(c,null);
+        }
+    }
+
     protected abstract void createWalls();
+
+    protected abstract void createEnemies();
 
     public List<Enemy> getEnemies() {
         return enemies;
@@ -45,6 +59,9 @@ public abstract class Map {
 
     protected void addWall(Wall wall){
         walls.add(wall);
+    }
+    protected void addEnemy(Enemy enemy){
+        enemies.add(enemy);
     }
     protected int getR() {
         return r;
@@ -73,6 +90,12 @@ public abstract class Map {
     protected void updateWalls() {
         for (Wall wall: walls){
             wall.update();
+        }
+    }
+
+    protected void updateEnemies(Player player) {
+        for (Enemy enemy: enemies){
+            enemy.update(player);
         }
     }
 

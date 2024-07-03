@@ -8,27 +8,23 @@ import android.graphics.Paint;
 
 public class Enemy extends Entity{
 
-    Context context;
     boolean isAllowedToMove = false;
-    Player player;
 
     final double MAX_SPEED = 5*0.6;
 
     float vx;
     float vy;
 
-    public Enemy(float cordX, float cordY, Bitmap bitmap,Context context,Player player) {
+    public Enemy(float cordX, float cordY, Bitmap bitmap) {
         super(cordX, cordY, bitmap);
         setBitmap(resizeBitmap(bitmap,60,60));
-        this.context = context;
-        this.player = player;
 
     }
 
-    public void update(){
+    public void update(Player player){
 
         if (true) {
-            updateVectors();
+            updateVectors(player);
             setPosX(getPosX() - vx/400);
             setPosY(getPosY() - vy/400);
         }
@@ -64,7 +60,7 @@ public class Enemy extends Entity{
 //        updateCollisions();
 //    }
 
-    private void updateVectors() {
+    private void updateVectors(Player player) {
         vx = getPosX() - player.getPosX();
         vy = getPosY() - player.getPosY();
     }
