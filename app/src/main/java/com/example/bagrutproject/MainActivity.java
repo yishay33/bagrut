@@ -11,20 +11,30 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final long DELAY_IN_MILLISECONDS = 3000 ;
-    Button btn;
+
+    ImageButton btn;
+    TextView tv;
+
     Intent intent;
-    private static final int REQUEST_CODE = 10;
+
+    int score;
+    private static final long DELAY_IN_MILLISECONDS = 3000 ;
+
+    SharedPreferences highScore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +44,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btn = findViewById(R.id.btn);
         btn.setOnClickListener(this);
 
+        tv = findViewById(R.id.tv);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, REQUEST_CODE);
+                ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 10);
             } else {
                 setupNotification();
             }
@@ -45,6 +57,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setupNotification();
         }
 
+        updateTv();
+    }
+
+    public void updateTv(){
+        highScore = getSharedPreferences("highest_score",MODE_PRIVATE);
+        score = highScore.getInt("score", 0);
+        tv.setText("high score: " + score);
     }
 
     private void setupNotification() {
@@ -73,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Intent intent = new Intent(this, NotificationReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
 
-        long triggerTime = System.currentTimeMillis() + 3000; // Trigger after 60,000 milliseconds (1 minute)
+        long triggerTime = System.currentTimeMillis() + DELAY_IN_MILLISECONDS; // Trigger after set milliseconds (1000 = 1 second)
 
         if (alarmManager != null) {
             // Using set() method for non-exact timing
@@ -81,14 +100,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == 10) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 setupNotification();
             } else {
-                // Permission denied, show a message to the user
-                // or handle the lack of permission as required
+                Toast.makeText(this,":(",Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -8,13 +8,11 @@ import android.graphics.Paint;
 public class HealthBar {
 
     private Player player;
-    private int width,height,margin;
-    private Paint healthPaint;
-    private Paint backgroundPaint;
+    private int height,margin;
+    private Paint healthPaint, backgroundPaint;
 
     public HealthBar(Player player){
         this.player = player;
-        this.width = 100;
         this.height = 20;
         this.margin = 2;
 

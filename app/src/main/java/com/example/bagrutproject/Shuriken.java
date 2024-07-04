@@ -12,10 +12,10 @@ public class Shuriken {
     private Player player;
     float posX;
     float posY;
+
     float targetX, targetY;
     Bitmap bitmap;
     private Rect collisions;
-    float dx,dy;
     double normalizedDx;
     double normalizedDy;
 
@@ -47,8 +47,8 @@ public class Shuriken {
     }
 
     public void update() {
-        this.posX += 5 * normalizedDx;
-        this.posY += 5 * normalizedDy;
+        this.posX += 10 * normalizedDx;
+        this.posY += 10 * normalizedDy;
 
         updateCollisions();
     }

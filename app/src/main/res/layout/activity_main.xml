@@ -4,19 +4,33 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
-    android:gravity="center"
+    android:background="@drawable/home"
+    android:orientation="vertical"
     >
 
 
-    <Button
-        android:id="@+id/btn"
+    <TextView
+        android:id="@+id/tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginTop="140dp"
+        android:layout_marginBottom="50dp"
+        android:fontFamily="@font/abril_fatface"
+        android:text="place holder"
+        android:textColor="#D7A8DD"
+        android:textAllCaps="true"
+        android:textSize="40dp" />
+
+    <ImageButton
+        android:id="@+id/btn"
+        android:layout_width="342dp"
+        android:layout_height="129dp"
+        android:layout_gravity="center"
         android:text="Hello World!"
-
+        android:layout_marginBottom="100dp"
+        android:src="@drawable/image_btn"
         />
-
 
 
 </LinearLayout>

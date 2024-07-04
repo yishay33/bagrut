@@ -12,18 +12,13 @@ public abstract class Map {
     private List<Enemy> enemies;
     private List<Wall> walls;
 
-    int r;
-    int g;
-    int b;
     MySurfaceView mySurfaceView;
     Context context;
 
-    public Map(int r, int g, int b, MySurfaceView mySurfaceView, Context context) {
+    public Map(MySurfaceView mySurfaceView, Context context) {
         walls = new ArrayList<Wall>();
         enemies = new ArrayList<Enemy>();
-        this.r = r;
-        this.g = g;
-        this.b = b;
+
         this.mySurfaceView = mySurfaceView;
         this.context = context;
     }
@@ -63,29 +58,8 @@ public abstract class Map {
     protected void addEnemy(Enemy enemy){
         enemies.add(enemy);
     }
-    protected int getR() {
-        return r;
-    }
 
-    public void setR(int r) {
-        this.r = r;
-    }
 
-    public int getG() {
-        return g;
-    }
-
-    public void setG(int g) {
-        this.g = g;
-    }
-
-    public int getB() {
-        return b;
-    }
-
-    public void setB(int b) {
-        this.b = b;
-    }
 
     protected void updateWalls() {
         for (Wall wall: walls){
@@ -99,9 +73,6 @@ public abstract class Map {
         }
     }
 
-    //    private void createEnemies() {
-    //        enemies.add(new Enemy(800,200, BitmapFactory.decodeResource(context.getResources(),R.drawable.enemy),getContext(),getPlayer()));
-    //        setEnemies(enemies);
-    //    }
+
 
 }

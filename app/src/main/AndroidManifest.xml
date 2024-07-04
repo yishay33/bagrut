@@ -8,7 +8,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/gdtd_foreground"
-        android:label="@string/app_name"
+        android:label="GDTD"
         android:roundIcon="@mipmap/gdtd_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BagrutProject"
@@ -17,13 +17,16 @@
             android:name=".GameActivity"
             android:exported="false"
             android:screenOrientation="sensorLandscape"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:theme="@style/FullScreenTheme"
 
 
             />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/FullScreenTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,6 +34,9 @@
             </intent-filter>
         </activity>
         <receiver android:name=".NotificationReceiver" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

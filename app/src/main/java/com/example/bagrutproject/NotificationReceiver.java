@@ -30,4 +30,5 @@ public class NotificationReceiver extends BroadcastReceiver {
 
         notificationManager.notify(100, builder.build());
     }
+
 }

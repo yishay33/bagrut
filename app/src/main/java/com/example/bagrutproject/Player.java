@@ -14,18 +14,16 @@ import java.util.List;
 
 public class Player extends Entity{
 
+
     private static final double MAX_SPEED = 5;
     String playerName;
-
     Context context;
     private float futureX;
     private float futureY;
-
-
-
     final int MAX_HP = 5;
     private int currentHp = MAX_HP;
     private HealthBar healthBar;
+
 
 
     public Player(float cordX, float cordY, Bitmap bitmap, String playerName, Context context) {

@@ -1,20 +1,19 @@
 package com.example.bagrutproject;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.os.Handler;
-import android.os.Looper;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MySurfaceView extends SurfaceView implements Runnable{
 
@@ -25,11 +24,11 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     private final Player player;
     private final JoyStick movementJoyStick;
     private Canvas c;
-    boolean isPressing = true;
     private boolean firstTime = true;
     List<Map> levels = new ArrayList<Map>();
     List<Shuriken> shurikens = new ArrayList<Shuriken>();
-
+    Bitmap background;
+    SharedPreferences highestScore;
     int score = 0;
     Paint p;
     private int joyStickPointerId = 0;
@@ -43,14 +42,13 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         p.setColor(Color.GREEN);
         p.setTextSize(100);
 
-
         player = new Player(this.getWidth()/2,this.getHeight()/2,
                 BitmapFactory.decodeResource(getResources()
                         , R.drawable.glayer),"yishay",getContext());
 
         movementJoyStick = new JoyStick(250,800,100,65);
 
-        levels.add(new Level_1(0, 0, 255,this,context));
+        levels.add(new Level_1(this,context));
     }
 
     @Override
@@ -65,7 +63,6 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                 try {
                     c = this.getHolder().lockCanvas();
                     synchronized (this.getHolder()) {
-                        c.drawRGB(levels.get(0).getR(), levels.get(0).getG(), levels.get(0).getB());
                         if (firstTime) {
 
 
@@ -74,9 +71,12 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                             levels.get(0).createWalls();
                             levels.get(0).createEnemies();
 
+                            background = resizeBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.background),this.getWidth(),this.getHeight());
                             firstTime = false;
 
                         }
+
+                        c.drawBitmap(background,0,0,null);
 
                         player.draw(c);
 
@@ -107,10 +107,8 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     }
 
     public void update(){
-
         movementJoyStick.update();
         levels.get(0).updateWalls();
-
         player.update(movementJoyStick, levels.get(0).getWalls());
         levels.get(0).updateEnemies(player);
         updateShurikenlList();
@@ -131,12 +129,26 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                         shurikens.remove(shuriken);
                         levels.get(0).getEnemies().remove(enemy);
                         score++;
+                        highestScore = context.getSharedPreferences("highest_score",Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = highestScore.edit();
+                        if (score > highestScore.getInt("score", 0)) {
+                            loadSharedPreferences();
+                        }
+                        else
+                            editor.apply();
                     }
                 }
             }
         }
 
 
+    }
+
+    public void loadSharedPreferences() {
+        highestScore = context.getSharedPreferences("highest_score",Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = highestScore.edit();
+        editor.putInt("score",score);
+        editor.apply();
     }
 
     private void checkForIntersects() {
@@ -164,13 +176,13 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         ((GameActivity)context).finish();
     }
 
-    public boolean isPointInside(double pointX, double pointY) {
-        // Calculate the distance between the point and the circle's center
-        double distance = Math.sqrt(Math.pow(pointX - movementJoyStick.getOuterCircleCenterPositionX(),
-                2) + Math.pow(pointY - movementJoyStick.getOuterCircleCenterPositionY(), 2));
 
-        // Check the position based on distance and radius
-        return distance < movementJoyStick.getOuterCircleRadius(); // Inside the circle
+    public int convertDpToPixels(int dp){
+        return (int)(dp * Resources.getSystem().getDisplayMetrics().density);
+    }
+
+    public Bitmap resizeBitmap(Bitmap bitmap,int toWidth,int toHeight){
+        return Bitmap.createScaledBitmap(bitmap, convertDpToPixels(toWidth),convertDpToPixels(toHeight),false);
     }
 
     @Override
@@ -182,11 +194,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                 if (movementJoyStick.getIsPressed()){
                     //joystick is pressed and another action comes in,
                     // meaning a shuriken is meant to be thrown
-
-                    if (!isPointInside(event.getX(),event.getY())){
-                        shurikens.add(new Shuriken(player,event.getX(),event.getY()));
-                    }
-
+                    shurikens.add(new Shuriken(player,event.getX(),event.getY()));
                 }
                 else if (movementJoyStick.isPressed((double) event.getX(), (double) event.getY())) {
                     //the joystick is being pressed
@@ -195,9 +203,8 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                 }else {
                     //joystick is not pressed and hasn't been pressed
                     //meaning a shuriken is meant to be thrown
-                    if (!isPointInside(event.getX(),event.getY())){
-                        shurikens.add(new Shuriken(player,event.getX(),event.getY()));
-                    }
+                    shurikens.add(new Shuriken(player,event.getX(),event.getY()));
+
                 }
                 return true;
             case MotionEvent.ACTION_MOVE:

@@ -4,17 +4,11 @@ import android.graphics.Bitmap;
 
 public class Enemy extends Entity{
 
-    boolean isAllowedToMove = false;
-
-    final double MAX_SPEED = 5*0.2;
-
-    float vx;
-    float vy;
+    final double MAX_SPEED = 5*0.60;
 
     public Enemy(float cordX, float cordY, Bitmap bitmap) {
         super(cordX, cordY, bitmap);
         setBitmap(resizeBitmap(bitmap,30,30));
-
     }
 
 //    public void update(Player player){
@@ -41,14 +35,9 @@ public class Enemy extends Entity{
         setPosX((float) (getPosX() +MAX_SPEED * normalizedDx)) ;
         setPosY((float) (getPosY() +MAX_SPEED * normalizedDy)) ;
 
-
         updateCollisions();
     }
 
-    private void updateVectors(Player player) {
-        vx = getPosX() - player.getPosX();
-        vy = getPosY() - player.getPosY();
-    }
 
 
 }

@@ -32,10 +32,6 @@ public class Wall{
         collisions.set(this.posX,this.posY,this.posX+width,this.posY+height);
     }
 
-    public Wall dupWall(){
-        Wall wall = new Wall(this.posX,this.posY,this.width,this.height,p);
-        return wall;
-    }
 
     public void draw(Canvas c){
         c.drawRect(collisions,p);
@@ -69,4 +65,5 @@ public class Wall{
         posX = i;
         posY = i1;
     }
+
 }
