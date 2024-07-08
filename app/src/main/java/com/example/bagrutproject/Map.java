@@ -68,8 +68,13 @@ public abstract class Map {
     }
 
     protected void updateEnemies(Player player) {
-        for (Enemy enemy: enemies){
-            enemy.update(player);
+        if (enemies.isEmpty()){
+            createEnemies();
+            player.setCurrentHp(player.getCurrentHp()+1);
+        }else {
+            for (Enemy enemy : enemies) {
+                enemy.update(player);
+            }
         }
     }
 

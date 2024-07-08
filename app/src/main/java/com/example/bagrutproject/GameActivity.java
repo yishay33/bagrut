@@ -3,28 +3,69 @@ package com.example.bagrutproject;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.Toast;
 
 public class GameActivity extends AppCompatActivity {
 
     MySurfaceView mySurfaceView;
     Thread thread;
     boolean userAskBack = false;
+    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mySurfaceView = new MySurfaceView(this);
+        mySurfaceView = new MySurfaceView(this,this);
         thread = new Thread(mySurfaceView);
         thread.start();
 
         ViewGroup.LayoutParams layoutParams = new ActionBar.LayoutParams
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
+        mediaPlayer = MediaPlayer.create(this,R.raw.balls);
+        setMediaPlayer();
+
         addContentView(mySurfaceView,layoutParams);
     }
+
+    public void setMediaPlayer(){
+        if (mediaPlayer == null){
+            mediaPlayer = MediaPlayer.create(this,R.raw.balls);
+
+        }
+        mediaPlayer.start();
+    }
+
+    public void openDialog(){
+        final Dialog dialog = new Dialog(this);
+        Log.d("balls","second test");
+        dialog.setContentView(R.layout.game_over_dialog);
+
+        dialog.setCancelable(false);
+        Button btnQuit = dialog.findViewById(R.id.btn_quit);
+
+
+        btnQuit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (view == btnQuit){
+                    dialog.dismiss();
+                    mySurfaceView.destroy();
+                }
+            }
+        });
+        dialog.show();
+    }
+
+
     @Override
     public void finish() {
         super.finish();

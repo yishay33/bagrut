@@ -1,5 +1,6 @@
 package com.example.bagrutproject;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -8,15 +9,22 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MySurfaceView extends SurfaceView implements Runnable{
 
+    private GameActivity gameActivity;
     Context context;
     SurfaceHolder holder;
     boolean threadRunning = true;
@@ -33,10 +41,12 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     Paint p;
     private int joyStickPointerId = 0;
 
-    public MySurfaceView(Context context) {
+    public MySurfaceView(Context context,GameActivity gameActivity) {
         super(context);
         this.context = context;
         this.holder = getHolder();
+
+        this.gameActivity = gameActivity;
 
         p  = new Paint();
         p.setColor(Color.GREEN);
@@ -65,7 +75,6 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                     synchronized (this.getHolder()) {
                         if (firstTime) {
 
-
                             player.setCords((this.getWidth() / 2)-player.getBitmap().getWidth(), (this.getHeight() / 2)-player.getBitmap().getWidth());
 
                             levels.get(0).createWalls();
@@ -73,7 +82,6 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
                             background = resizeBitmap(BitmapFactory.decodeResource(getResources(),R.drawable.background),this.getWidth(),this.getHeight());
                             firstTime = false;
-
                         }
 
                         c.drawBitmap(background,0,0,null);
@@ -88,9 +96,9 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                         for (Shuriken shuriken: shurikens){
                             shuriken.draw(c);
                         }
-
-                        update();
                         levels.get(0).drawEnemies(c);
+                        update();
+
 
                     }
 
@@ -110,8 +118,8 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         movementJoyStick.update();
         levels.get(0).updateWalls();
         player.update(movementJoyStick, levels.get(0).getWalls());
-        levels.get(0).updateEnemies(player);
         updateShurikenlList();
+        levels.get(0).updateEnemies(player);
         checkForIntersects();
 
     }
@@ -155,11 +163,17 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         for (Enemy enemy: levels.get(0).getEnemies()){
             if(player.doesIntersects(enemy)){
                 levels.get(0).getEnemies().remove(enemy);
-//                score++;
                 player.setCurrentHp(player.getCurrentHp()-1);
+                if (player.getCurrentHp() <= 0){
+                    Log.d("balls","first test");
+//                  gameActivity.openDialog();
+                    destroy();
+                }
             }
+            
         }
     }
+
 
 
 
@@ -203,7 +217,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
                 }else {
                     //joystick is not pressed and hasn't been pressed
                     //meaning a shuriken is meant to be thrown
-                    shurikens.add(new Shuriken(player,event.getX(),event.getY()));
+                    shurikens.add(new Shuriken(player, event.getX(),event.getY()));
 
                 }
                 return true;
