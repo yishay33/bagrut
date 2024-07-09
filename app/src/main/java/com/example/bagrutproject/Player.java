@@ -20,7 +20,7 @@ public class Player extends Entity{
     Context context;
     private float futureX;
     private float futureY;
-    final int MAX_HP = 5;
+    final int MAX_HP = 100;
     private int currentHp = MAX_HP;
     private HealthBar healthBar;
 
