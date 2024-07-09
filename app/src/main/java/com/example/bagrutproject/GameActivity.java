@@ -18,7 +18,6 @@ public class GameActivity extends AppCompatActivity {
     MySurfaceView mySurfaceView;
     Thread thread;
     boolean userAskBack = false;
-    MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,19 +29,10 @@ public class GameActivity extends AppCompatActivity {
         ViewGroup.LayoutParams layoutParams = new ActionBar.LayoutParams
                 (ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-        mediaPlayer = MediaPlayer.create(this,R.raw.balls);
-        setMediaPlayer();
-
         addContentView(mySurfaceView,layoutParams);
     }
 
-    public void setMediaPlayer(){
-        if (mediaPlayer == null){
-            mediaPlayer = MediaPlayer.create(this,R.raw.balls);
 
-        }
-        mediaPlayer.start();
-    }
 
     public void openDialog(){
         final Dialog dialog = new Dialog(this);
@@ -80,7 +70,7 @@ public class GameActivity extends AppCompatActivity {
             }
             break;
         }
-
+        mySurfaceView.stopPlaying();
 
     }
 

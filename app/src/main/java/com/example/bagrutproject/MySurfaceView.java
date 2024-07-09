@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -40,6 +41,7 @@ public class MySurfaceView extends SurfaceView implements Runnable{
     int score = 0;
     Paint p;
     private int joyStickPointerId = 0;
+    MediaPlayer mediaPlayer;
 
     public MySurfaceView(Context context,GameActivity gameActivity) {
         super(context);
@@ -59,6 +61,8 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         movementJoyStick = new JoyStick(250,800,100,65);
 
         levels.add(new Level_1(this,context));
+        mediaPlayer = MediaPlayer.create(getContext(),R.raw.balls);
+        setMediaPlayer();
     }
 
     @Override
@@ -123,7 +127,12 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         checkForIntersects();
 
     }
-
+    public void setMediaPlayer(){
+        if (mediaPlayer == null){
+            mediaPlayer = MediaPlayer.create(getContext(),R.raw.balls);
+        }
+        mediaPlayer.start();
+    }
 
     public void updateShurikenlList(){
         for (Shuriken shuriken : shurikens){
@@ -176,17 +185,19 @@ public class MySurfaceView extends SurfaceView implements Runnable{
 
 
 
-
     public void pause(){
         isRunning = false;
+        mediaPlayer.pause();
     }
 
     public void resume(){
         isRunning = true;
+        mediaPlayer.start();
     }
 
     public void destroy(){
         isRunning = false;
+        stopPlaying();
         ((GameActivity)context).finish();
     }
 
@@ -239,5 +250,9 @@ public class MySurfaceView extends SurfaceView implements Runnable{
         }
 
         return true;
+    }
+
+    public void stopPlaying() {
+        mediaPlayer.stop();
     }
 }
